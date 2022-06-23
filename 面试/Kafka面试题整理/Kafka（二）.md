@@ -16,11 +16,13 @@
 ### 4、在Kafka中broker的意义是什么？  
 &emsp; 在Kafka集群中，broker指Kafka服务器。  
 &emsp; 术语解析：  
+
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E4%B8%ADbroker%E7%9A%84%E6%84%8F%E4%B9%89.png"/>  
+<img src="./../../Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E4%B8%ADbroker%E7%9A%84%E6%84%8F%E4%B9%89.png"/>  
 <p align="center">
 </p>
 </p>  
+
 
 ### 5、Kafka服务器能接收到的最大信息是多少？  
 &emsp; Kafka服务器可以接收到的消息的最大大小是1000000字节。  

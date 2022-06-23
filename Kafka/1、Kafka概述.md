@@ -4,27 +4,30 @@
 
 ### 1、消息队列
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E6%96%87%E6%A1%A3Pics/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%20.png"/>  
+<img src="./../Pics/Kafka%E6%96%87%E6%A1%A3Pics/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%20.png"/>  
 <p align="center">
 </p>
 </p>  
 
 消息队列模式：  
 1）**`点对点模式`**（**一对一，消费者主动拉取数据**，消息收到后消息清除）  
+
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E6%96%87%E6%A1%A3Pics/%E7%82%B9%E5%AF%B9%E7%82%B9%E6%A8%A1%E5%BC%8F.png"/>  
+<img src="./../Pics/Kafka%E6%96%87%E6%A1%A3Pics/%E7%82%B9%E5%AF%B9%E7%82%B9%E6%A8%A1%E5%BC%8F.png"/>  
 <p align="center">
 </p>
 </p>  
+
 
 &emsp; 点对点模型通常是一个基于拉取或者轮询的消息传送模型，这种模型从队列中请求信息，而不是将消息推送到客户端。这个模型的特点是发送到队列的消息被一个且只有一个接收者接收处理，即使有多个消息监听者也是如此。（**缺点**：需要时刻监控队列的消息变化，拉取数据，任务需要时刻开启，浪费资源）
 
 2）**`发布/订阅模式`**（**一对多，数据生产后，推送给所有订阅者**）  
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E6%96%87%E6%A1%A3Pics/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F.png"/>  
+<img src="./../Pics/Kafka%E6%96%87%E6%A1%A3Pics/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%BC%8F.png"/>  
 <p align="center">
 </p>
 </p>  
+
 
 &emsp; 发布订阅模型则是一个基于推送的消息传送模型。发布订阅模型可以有多种不同的订阅者，临时订阅者只在主动监听主题时才接收消息，而持久订阅者则监听主题的所有消息，即使当前订阅者不可用，处于离线状态。（**缺点**：推送消息的速度等没有办法适应所有的订阅者，因为订阅者的性能是不一样的）  
 
@@ -49,17 +52,19 @@
 ### 3、Kafka架构
 整体架构图：  
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E7%AE%80%E5%8D%95%E6%9E%B6%E6%9E%84.jpg"/>  
+<img src="./../Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E7%AE%80%E5%8D%95%E6%9E%B6%E6%9E%84.jpg"/>  
 <p align="center">
 </p>
 </p>  
 
+
 Kafka详细架构图：  
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E8%AF%A6%E7%BB%86%E6%9E%B6%E6%9E%84.jpg"/>  
+<img src="./../Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E8%AF%A6%E7%BB%86%E6%9E%B6%E6%9E%84.jpg"/>  
 <p align="center">
 </p>
 </p>  
+
 
 1）**`Producer`**：消息生产者，就是向kafka broker发消息的客户端；  
 2）**`Consumer`**：消息消费者，向kafka broker取消息的客户端；  

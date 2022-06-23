@@ -3,11 +3,13 @@
 ### 1、Producer API
 1）消息发送流程  
 &emsp; Kafka的Producer发送消息采用的是**异步发送**的方式。在消息发送的过程中，涉及到了**两个线程——main线程和Sender线程**，以及**一个线程共享变量——RecordAccumulator**。main线程将消息发送给RecordAccumulator，Sender线程不断从RecordAccumulator中拉取消息发送到Kafka broker。  
+
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E6%96%87%E6%A1%A3Pics/Kafka%E6%A1%88%E4%BE%8B/Producer%20API.png"/>  
+<img src="./../Pics/Kafka%E6%96%87%E6%A1%A3Pics/Kafka%E6%A1%88%E4%BE%8B/Producer%20API.png"/>  
 <p align="center">
 </p>
 </p>  
+
 
 **`batch.size`**：只有数据积累到batch.size之后，sender才会发送数据。  
 **`linger.ms`**：如果数据迟迟未达到batch.size，sender等待linger.time之后就会发送数据。
@@ -20,7 +22,7 @@
   <artifactId>kafka-clients</artifactId>
   <version>0.11.0.0</version>
 </dependency>
-```  
+```
 
 （2）编写代码
 需要用到的类：  
@@ -55,7 +57,7 @@ public class CustomProducer {
         producer.close();
     }
 }
-```  
+```
 
 **2.带回调函数的API**  
 &emsp; 回调函数会在producer收到ack时调用，为异步调用，该方法有两个参数，分别是RecordMetadata和Exception，如果Exception为null，说明消息发送成功，如果Exception不为null，说明消息发送失败。  
@@ -97,7 +99,7 @@ public class CustomProducer {
         producer.close();
     }
 }
-```  
+```
 
 3）**同步发送API**  
 &emsp; 同步发送的意思就是，一条消息发送之后，会阻塞当前线程，直至返回ack。  
@@ -130,7 +132,7 @@ public class CustomProducer {
         producer.close();
     }
 }
-```  
+```
 
 ### 2、Consumer API
 &emsp; Consumer消费数据时的可靠性是很容易保证的，因为数据在Kafka中是持久化的，故不用担心数据丢失问题。  
@@ -145,7 +147,7 @@ public class CustomProducer {
   <artifactId>kafka-clients</artifactId>
   <version>0.11.0.0</version>
 </dependency>
-```  
+```
 
 （2）编写代码  
 需要用到的类：  
@@ -182,14 +184,14 @@ public class CustomConsumer {
         }
     }
 }
-```  
+```
 
 （3）代码分析：  
 &emsp; 手动提交offset的方法有两种：分别是commitSync（同步提交）和commitAsync（异步提交）。两者的相同点是，都会将本次poll的一批数据最高的偏移量提交；不同点是，commitSync会失败重试，一直到提交成功（如果由于不可恢复原因导致，也会提交失败）；而commitAsync则没有失败重试机制，故有可能提交失败。  
 
 （4）数据重复消费问题  
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E6%96%87%E6%A1%A3Pics/Kafka%E6%A1%88%E4%BE%8B/%E6%95%B0%E6%8D%AE%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%E9%97%AE%E9%A2%98.jpg"/>  
+<img src="./../Pics/Kafka%E6%96%87%E6%A1%A3Pics/Kafka%E6%A1%88%E4%BE%8B/%E6%95%B0%E6%8D%AE%E9%87%8D%E5%A4%8D%E6%B6%88%E8%B4%B9%E9%97%AE%E9%A2%98.jpg"/>  
 <p align="center">
 </p>
 </p>  
@@ -228,7 +230,7 @@ public class CustomConsumer {
         }
     }
 }
-```   
+```
 
 ### 3、自定义Interceptor
 1）拦截器原理  
@@ -246,11 +248,13 @@ public class CustomConsumer {
 2）**拦截器案例**  
 （1）需求：  
 &emsp; 实现一个简单的双interceptor组成的拦截链。第一个interceptor会在消息发送前将时间戳信息加到消息value的最前部；第二个interceptor会在消息发送后更新成功发送消息数或失败发送消息数。  
+
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E6%96%87%E6%A1%A3Pics/Kafka%E6%A1%88%E4%BE%8B/Kafka%E6%8B%A6%E6%88%AA%E5%99%A8.jpg"/>  
+<img src="./../Pics/Kafka%E6%96%87%E6%A1%A3Pics/Kafka%E6%A1%88%E4%BE%8B/Kafka%E6%8B%A6%E6%88%AA%E5%99%A8.jpg"/>  
 <p align="center">
 </p>
 </p>  
+
 
 （2）案例实践  
 1.增加时间戳拦截器  
@@ -284,7 +288,7 @@ public class TimeInterceptor implements ProducerInterceptor<String, String> {
 
 	}
 }
-```  
+```
 
 2.统计发送消息成功和发送失败消息数，并在producer关闭时打印这两个计数器  
 ```java
@@ -324,7 +328,7 @@ public class CounterInterceptor implements ProducerInterceptor<String, String>{
         System.out.println("Failed sent: " + errorCounter);
 	}
 }
-```  
+```
 
 3.producer主程序  
 ```java
@@ -369,13 +373,13 @@ public class InterceptorProducer {
 		producer.close();
 	}
 }
-```  
+```
 
 （3）测试  
 &emsp; 在kafka上启动消费者，然后运行客户端java程序。  
 ```xml
 bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --from-beginning --topic first
-```  
+```
 
 
 

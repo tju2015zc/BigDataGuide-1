@@ -17,14 +17,15 @@
 ### 3、Kafka 的设计架构？  
 简单架构如下：  
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E7%AE%80%E5%8D%95%E6%9E%B6%E6%9E%84.jpg"/>  
+<img src="./../../Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E7%AE%80%E5%8D%95%E6%9E%B6%E6%9E%84.jpg"/>  
 <p align="center">
 </p>
 </p>  
 
+
 详细架构如下：  
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E8%AF%A6%E7%BB%86%E6%9E%B6%E6%9E%84.jpg"/>  
+<img src="./../../Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E8%AF%A6%E7%BB%86%E6%9E%B6%E6%9E%84.jpg"/>  
 <p align="center">
 </p>
 </p>  
@@ -38,7 +39,8 @@ Kafka 架构分为以下几个部分：
 &emsp; Partition：为了实现扩展性，一个非常大的 topic 可以分布到多个 broker上，每个 partition 是一个有序的队列。partition 中的每条消息都会被分配一个有序的id（offset）。将消息发给 consumer，kafka 只保证按一个 partition 中的消息的顺序，不保证一个 topic 的整体（多个 partition 间）的顺序。  
 &emsp; Offset：kafka 的存储文件都是按照 offset.kafka 来命名，用 offset 做名字的好处是方便查找。例如你想找位于 2049 的位置，只要找到 2048.kafka 的文件即可。当然 the first offset 就是 00000000000.kafka。  
 
-### 4、Kafka 分区的目的？  
+### 4、Kafka 分区的目的？
+
 &emsp; 分区对于 Kafka 集群的好处是：实现负载均衡。分区对于消费者来说，可以提高并发度，提高效率。  
 
 ### 5、Kafka 是如何做到消息的有序性？  
@@ -65,11 +67,13 @@ Kafka 架构分为以下几个部分：
 &emsp; 在介绍 Leader 选举之前，让我们先来了解一下 ISR（in-sync replicas）列表。每个分区的 leader 会维护一个 ISR 列表，ISR 列表里面就是 follower 副本的 Borker 编号，只有跟得上 Leader 的 follower 副本才能加入到 ISR 里面，这个是通过 replica.lag.time.max.ms 参数配置的。只有 ISR 里的成员才有被选为 leader 的可能。  
 2）**数据一致性（可回答 Kafka数据一致性原理？）**  
 &emsp; 这里介绍的数据一致性主要是说不论是老的 Leader 还是新选举的 Leader，Consumer 都能读到一样的数据。那么 Kafka 是如何实现的呢？  
+
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7.jpg"/>  
+<img src="./../../Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7.jpg"/>  
 <p align="center">
 </p>
 </p>  
+
 
 &emsp; 假设分区的副本为3，其中副本0是 Leader，副本1和副本2是 follower，并且在 ISR 列表里面。虽然副本0已经写入了 Message4，但是 Consumer 只能读取到 Message2。因为所有的 ISR 都同步了 Message2，只有 High Water Mark 以上的消息才支持 Consumer 读取，而 High Water Mark 取决于 ISR 列表里面偏移量最小的分区，对应于上图的副本2，这个很类似于木桶原理。  
 &emsp; 这样做的原因是还没有被足够多副本复制的消息被认为是“不安全”的，如果 Leader 发生崩溃，另一个副本成为新 Leader，那么这些消息很可能丢失了。如果我们允许消费者读取这些消息，可能就会破坏一致性。试想，一个消费者从当前 Leader（副本0） 读取并处理了 Message4，这个时候 Leader 挂掉了，选举了副本1为新的 Leader，这时候另一个消费者再去从新的 Leader 读取消息，发现这个消息其实并不存在，这就导致了数据不一致性问题。  
@@ -87,7 +91,8 @@ Kafka 架构分为以下几个部分：
 &emsp; LSO：是 LastStableOffset 的简称，对未完成的事务而言，LSO 的值等于事务中第一条消息的位置(firstUnstableOffset)，对已完成的事务而言，它的值同 HW 相同  
 &emsp; LW：Low Watermark 低水位, 代表 AR 集合中最小的 logStartOffset 值。  
 
-### 9、数据传输的事务有几种？  
+### 9、数据传输的事务有几种？
+
 &emsp; 数据传输的事务定义通常有以下三种级别：  
 &emsp; 最多一次：消息不会被重复发送，最多被传输一次，但也有可能一次不传输  
 &emsp; 最少一次：消息不会被漏发送，最少被传输一次，但也有可能被重复传输  
@@ -124,9 +129,10 @@ Kafka 架构分为以下几个部分：
 &emsp; 第二步：leader开始分配消费方案，指明具体哪个consumer负责消费哪些topic的哪些partition。一旦完成分配，leader会将这个方案发给coordinator。coordinator接收到分配方案之后会把方案发给各个consumer，这样组内的所有成员就都知道自己应该消费哪些分区了。  
 &emsp; 所以对于Rebalance来说，Coordinator起着至关重要的作用。  
 
-### 16、Kafka分区分配策略  
+### 16、Kafka分区分配策略
+
 <p align="center">
-<img src="https://github.com/Dr11ft/BigDataGuide/blob/master/Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E5%88%86%E5%8C%BA%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5.png"/>  
+<img src="./../../Pics/Kafka%E9%9D%A2%E8%AF%95%E9%A2%98Pics/Kafka%E5%88%86%E5%8C%BA%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5.png"/>  
 <p align="center">
 </p>
 </p>  
@@ -156,6 +162,7 @@ Kafka 架构分为以下几个部分：
 &emsp; 同一个Consumer Group里面的所有消费者的num.streams必须相等；  
 &emsp; 每个消费者订阅的主题必须相同。  
 &emsp; 所以这里假设前面提到的2个消费者的num.streams = 2。RoundRobin策略的工作原理：将所有主题的分区组成 TopicAndPartition 列表，然后对 TopicAndPartition 列表按照 hashCode 进行排序，这里文字可能说不清，看下面的代码应该会明白：  
+
 ```scala
 val allTopicPartitions = ctx.partitionsForTopic.flatMap { case(topic, partitions) =>
   info("Consumer %s rebalancing the following partitions for topic %s: %s"
@@ -170,7 +177,7 @@ val allTopicPartitions = ctx.partitionsForTopic.flatMap { case(topic, partitions
    */
   topicPartition1.toString.hashCode < topicPartition2.toString.hashCode
 })
-```  
+```
 &emsp; 最后按照round-robin风格将分区分别分配给不同的消费者线程。  
 &emsp; 在我们的例子里面，假如按照 hashCode 排序完的topic-partitions组依次为T1-5, T1-3, T1-0, T1-8, T1-2, T1-1, T1-4, T1-7, T1-6, T1-9，我们的消费者线程排序为C1-0, C1-1, C2-0, C2-1，最后分区分配的结果为：  
 &emsp; C1-0 将消费 T1-5, T1-2, T1-6 分区；  
